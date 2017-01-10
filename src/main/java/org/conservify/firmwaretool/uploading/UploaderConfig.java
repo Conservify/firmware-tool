@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.uploading;
 
 public class UploaderConfig {
     private boolean use1200bpsTouch;

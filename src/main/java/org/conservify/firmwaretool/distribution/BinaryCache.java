@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.distribution;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

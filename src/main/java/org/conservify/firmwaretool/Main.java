@@ -2,6 +2,11 @@ package org.conservify.firmwaretool;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.cli.*;
+import org.conservify.firmwaretool.distribution.*;
+import org.conservify.firmwaretool.uploading.DiscoveredPort;
+import org.conservify.firmwaretool.uploading.PortChooser;
+import org.conservify.firmwaretool.uploading.Uploader;
+import org.conservify.firmwaretool.uploading.UploaderConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

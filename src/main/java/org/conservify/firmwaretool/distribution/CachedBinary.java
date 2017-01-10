@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.distribution;
 
 import java.io.File;
 

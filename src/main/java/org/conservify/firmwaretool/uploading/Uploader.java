@@ -1,5 +1,6 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.uploading;
 
+import org.conservify.firmwaretool.util.RunCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

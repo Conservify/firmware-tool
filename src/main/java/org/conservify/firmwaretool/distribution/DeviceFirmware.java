@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.distribution;
 
 public class DeviceFirmware {
     private String name;

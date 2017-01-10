@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.uploading;
 
 public class DiscoveredPort {
     private String uploadPort;

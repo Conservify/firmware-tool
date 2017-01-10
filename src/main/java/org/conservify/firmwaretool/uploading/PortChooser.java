@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.uploading;
 
 import com.fazecast.jSerialComm.*;
 import org.slf4j.Logger;
