@@ -77,8 +77,10 @@ public class PortChooser {
             }
 
             if (ports == null) {
+                logger.info("---------------------------------------------------------------------");
                 logger.info("ERROR: Unable to find the specified port, try resetting while I look.");
                 logger.info("ERROR: Press RESET and cross your fingers.");
+                logger.info("---------------------------------------------------------------------");
                 DiscoveredPort found = lookForNewPort(getPortNames(), 20);
                 if (found != null) {
                     return found;

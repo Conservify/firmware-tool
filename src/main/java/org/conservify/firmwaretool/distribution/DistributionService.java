@@ -21,35 +21,40 @@ public class DistributionService {
 
     private static String distributionServerUrl = "https://conservify.page5of4.com/distribution";
 
-    public ArrayList<DeviceFirmware> getDeviceFirmwares() throws UnirestException {
-        ArrayList<String> searchUrls = new ArrayList<String>();
-        ArrayList<DeviceFirmware> devices = new ArrayList<DeviceFirmware>();
-        searchUrls.add(distributionServerUrl);
+    public ArrayList<DeviceFirmware> getDeviceFirmwares() {
+        try {
+            ArrayList<String> searchUrls = new ArrayList<String>();
+            ArrayList<DeviceFirmware> devices = new ArrayList<DeviceFirmware>();
+            searchUrls.add(distributionServerUrl);
 
-        while (!searchUrls.isEmpty()) {
-            ArrayList<String> newUrls = new ArrayList<String>();
-            String url = searchUrls.remove(0);
+            while (!searchUrls.isEmpty()) {
+                ArrayList<String> newUrls = new ArrayList<String>();
+                String url = searchUrls.remove(0);
 
-            HttpResponse<DirectoryListingEntry[]> response = Unirest.get(url)
-                    .header("accept", "application/json")
-                    .asObject(DirectoryListingEntry[].class);
+                HttpResponse<DirectoryListingEntry[]> response = Unirest.get(url)
+                        .header("accept", "application/json")
+                        .asObject(DirectoryListingEntry[].class);
 
-            boolean anyTimestampedEntries = false;
-            for (DirectoryListingEntry entry : response.getBody()) {
-                if (shouldWalk(entry)) {
-                    newUrls.add(url + "/" + entry.getName());
+                boolean anyTimestampedEntries = false;
+                for (DirectoryListingEntry entry : response.getBody()) {
+                    if (shouldWalk(entry)) {
+                        newUrls.add(url + "/" + entry.getName());
+                    }
+                    anyTimestampedEntries = anyTimestampedEntries || isTimestampedDirectory(entry);
                 }
-                anyTimestampedEntries = anyTimestampedEntries || isTimestampedDirectory(entry);
+                if (!anyTimestampedEntries) {
+                    searchUrls.addAll(newUrls);
+                }
+                else {
+                    String name = url.replace(distributionServerUrl + "/", "");
+                    devices.add(new DeviceFirmware(name, url));
+                }
             }
-            if (!anyTimestampedEntries) {
-                searchUrls.addAll(newUrls);
-            }
-            else {
-                String name = url.replace(distributionServerUrl + "/", "");
-                devices.add(new DeviceFirmware(name, url));
-            }
+            return devices;
         }
-        return devices;
+        catch (UnirestException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static boolean shouldWalk(DirectoryListingEntry entry) {
@@ -60,35 +65,40 @@ public class DistributionService {
         return Pattern.matches("\\d{8}+_\\d{6}+", entry.getName());
     }
 
-    public ArrayList<DeviceFirmwareBinary> getFirmwareBinaries(DeviceFirmware deviceFirmware) throws UnirestException {
-        ArrayList<String> searchUrls = new ArrayList<String>();
-        ArrayList<DeviceFirmwareBinary> binaries = new ArrayList<DeviceFirmwareBinary>();
+    public ArrayList<DeviceFirmwareBinary> getFirmwareBinaries(DeviceFirmware deviceFirmware) {
+        try {
+            ArrayList<String> searchUrls = new ArrayList<String>();
+            ArrayList<DeviceFirmwareBinary> binaries = new ArrayList<DeviceFirmwareBinary>();
 
-        searchUrls.add(deviceFirmware.getUrl());
+            searchUrls.add(deviceFirmware.getUrl());
 
-        while (!searchUrls.isEmpty()) {
-            String url = searchUrls.remove(0);
+            while (!searchUrls.isEmpty()) {
+                String url = searchUrls.remove(0);
 
-            HttpResponse<DirectoryListingEntry[]> response = Unirest.get(url)
-                    .header("accept", "application/json")
-                    .asObject(DirectoryListingEntry[].class);
+                HttpResponse<DirectoryListingEntry[]> response = Unirest.get(url)
+                        .header("accept", "application/json")
+                        .asObject(DirectoryListingEntry[].class);
 
-            ArtifactDirectory artifactDirectory = isArtifactDirectory(url, response.getBody());
-            if (artifactDirectory != null) {
-                binaries.add(createBinary(deviceFirmware, artifactDirectory));
-            }
-            else {
-                for (DirectoryListingEntry entry : response.getBody()) {
-                    if (shouldWalk(entry)) {
-                        searchUrls.add(url + "/" + entry.getName());
+                ArtifactDirectory artifactDirectory = isArtifactDirectory(url, response.getBody());
+                if (artifactDirectory != null) {
+                    binaries.add(createBinary(deviceFirmware, artifactDirectory));
+                }
+                else {
+                    for (DirectoryListingEntry entry : response.getBody()) {
+                        if (shouldWalk(entry)) {
+                            searchUrls.add(url + "/" + entry.getName());
+                        }
                     }
                 }
             }
+
+            binaries.sort((o1, o2) -> o2.getBuildDate().compareTo(o1.getBuildDate()));
+
+            return binaries;
         }
-
-        binaries.sort((o1, o2) -> o2.getBuildDate().compareTo(o1.getBuildDate()));
-
-        return binaries;
+        catch (UnirestException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     ArtifactDirectory isArtifactDirectory(String directoryUrl, DirectoryListingEntry[] entries) {

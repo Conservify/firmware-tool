@@ -10,6 +10,12 @@ repositories {
     mavenCentral()
 }
 
+run {
+    if ( project.hasProperty("appArgs") ) {
+        args Eval.me(appArgs)
+    }
+}
+
 mainClassName = "org.conservify.firmwaretool.Main"
 
 dependencies {
