@@ -1,0 +1,3 @@
+alias ft-help="gradle run -PappArgs=\"['--help']\""
+alias ft-blink="gradle run -PappArgs=\"['-d', 'arduino-gradle-examples', '-upload']\""
+alias ft-download="gradle run -PappArgs=\"['--download']\""
