@@ -1,0 +1,7 @@
+binaries
+out
+project.properties
+.idea
+.gradle
+build
+firmwaretool.log
