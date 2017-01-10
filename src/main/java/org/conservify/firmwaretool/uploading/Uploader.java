@@ -15,7 +15,12 @@ public class Uploader {
     public boolean upload(File binary, String port, UploaderConfig config) {
         String command = config.getCommandLine();
         Properties properties = new Properties();
-        properties.put("bossac", "tools/bossac.exe");
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            properties.put("bossac", "tools/bossac.exe");
+        }
+        else {
+            properties.put("bossac", "tools/bossac_osx");
+        }
         properties.put("binary", binary.toString().replace("\\", "/"));
         properties.put("port", port);
 
