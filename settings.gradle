@@ -1,2 +1,4 @@
 rootProject.name = 'firmware-tool'
 
+include 'firmware-tool-lib'
+include 'firmware-tool-cli'
