@@ -43,6 +43,8 @@ public class PortChooser {
     }
 
     private DiscoveredPort lookForNewPort(String[] portNamesBefore, int tries) throws InterruptedException {
+        String candidatePort = null;
+
         while (tries-- > 0) {
             Thread.sleep(500);
             String[] portNamesNow = getPortNames();
@@ -56,6 +58,12 @@ public class PortChooser {
                     return new DiscoveredPort(newPorts[0], missingPorts[0], true);
                 }
                 return new DiscoveredPort(newPorts[0], null, true);
+            }
+            else if (missingPorts.length > 0) {
+                candidatePort = missingPorts[0];
+            }
+            else if (candidatePort != null) {
+                return new DiscoveredPort(candidatePort, null, true);
             }
         }
 

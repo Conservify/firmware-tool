@@ -69,7 +69,7 @@ public class Uploader {
             Uploader uploader = new Uploader(portDiscoveryInteraction);
             if (!port.isDiscovered()) {
                 PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
-                logger.info("Performing 1200bps trick on {} to get {}...", port.getTouchPort(), port.getUploadPort());
+                portDiscoveryInteraction.onProgress(String.format("Performing 1200bps trick on %s to get %s...", port.getTouchPort(), port.getUploadPort()));
                 port = portChooser.perform1200bpsTouch(port.getTouchPort());
             }
 
@@ -87,12 +87,12 @@ public class Uploader {
 
         if (settings.getLastUploadPort() != null) {
             if (portChooser.exists(settings.getLastTouchPort()) && !portChooser.exists(settings.getLastUploadPort())) {
-                logger.info("Using {}", settings.getLastUploadPort());
+                portDiscoveryInteraction.onProgress(String.format("Using %s", settings.getLastUploadPort()));
                 return new DiscoveredPort(settings.getLastUploadPort(), settings.getLastTouchPort(), false);
             }
 
             if (!portChooser.exists(settings.getLastTouchPort()) && portChooser.exists(settings.getLastUploadPort())) {
-                logger.info("Using {}", settings.getLastUploadPort());
+                portDiscoveryInteraction.onProgress(String.format("Using %s", settings.getLastUploadPort()));
                 return new DiscoveredPort(settings.getLastUploadPort(), settings.getLastTouchPort(), true);
             }
 
