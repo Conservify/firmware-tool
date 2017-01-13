@@ -22,4 +22,11 @@ public class DiscoveredPort {
         this.touchPort = touchPort;
         this.discovered = discovered;
     }
+
+    public String getMonitorPort() {
+        if (touchPort != null) {
+            return touchPort;
+        }
+        return uploadPort;
+    }
 }

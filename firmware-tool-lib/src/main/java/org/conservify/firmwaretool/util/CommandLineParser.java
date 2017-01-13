@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class CommandLineParser {
-    static String[] translateCommandLine(String toProcess) {
+    public static String[] translateCommandLine(String toProcess) {
         if (toProcess == null || toProcess.length() == 0) {
             return new String[0];
         }
