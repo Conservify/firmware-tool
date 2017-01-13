@@ -8,6 +8,11 @@ import java.util.*;
 
 public class PortChooser {
     private static final Logger logger = LoggerFactory.getLogger(PortChooser.class);
+    private final PortDiscoveryInteraction portDiscoveryInteraction;
+
+    public PortChooser(PortDiscoveryInteraction portDiscoveryInteraction) {
+        this.portDiscoveryInteraction = portDiscoveryInteraction;
+    }
 
     public DiscoveredPort perform1200bpsTouch(String portName){
         try {
@@ -26,7 +31,7 @@ public class PortChooser {
         }
     }
 
-    private boolean waitForPort(String portName, int tries) throws InterruptedException {
+    public boolean waitForPort(String portName, int tries) throws InterruptedException {
         while (tries-- > 0) {
             Thread.sleep(500);
             if (exists(portName)) {
@@ -44,7 +49,7 @@ public class PortChooser {
             String[] missingPorts = difference(portNamesBefore, portNamesNow);
             String[] newPorts = difference(portNamesNow, portNamesBefore);
 
-            logger.info("{} -> {}: {} / {}", portNamesBefore, portNamesNow, missingPorts, newPorts);
+            portDiscoveryInteraction.onPortStatus(portNamesBefore, portNamesNow, missingPorts, newPorts);
 
             if (newPorts.length > 0) {
                 if (missingPorts.length > 0) {
@@ -68,7 +73,6 @@ public class PortChooser {
         try {
             String newPort = specifiedPort;
             DiscoveredPort ports = null;
-            String serialPort = specifiedPort != null ? SerialPort.getCommPort(specifiedPort).getSystemPortName() : null;
             if (perform1200bpsTouch && specifiedPort != null) {
                 ports = perform1200bpsTouch(specifiedPort);
                 if (ports == null) {
@@ -77,10 +81,7 @@ public class PortChooser {
             }
 
             if (ports == null) {
-                logger.info("---------------------------------------------------------------------");
-                logger.info("ERROR: Unable to find the specified port, try resetting while I look.");
-                logger.info("ERROR: Press RESET and cross your fingers.");
-                logger.info("---------------------------------------------------------------------");
+                portDiscoveryInteraction.onBeginning();
                 DiscoveredPort found = lookForNewPort(getPortNames(), 20);
                 if (found != null) {
                     return found;

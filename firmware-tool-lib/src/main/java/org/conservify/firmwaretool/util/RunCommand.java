@@ -7,20 +7,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class RunCommand {
     private static final Logger logger = LoggerFactory.getLogger(RunCommand.class);
 
-    public static String run(String cmd, File workingDir, boolean echo) {
+    public static String run(String cmd, File workingDir, Consumer<String> progress) {
         String[] args = CommandLineParser.translateCommandLine(cmd);
         ArrayList<String> fixed = new ArrayList<String>();
         for (String arg : args) {
             fixed.add(DoubleQuotedArgumentsOnWindowsCommandLine.fixArgument(arg));
         }
-        return run(fixed.toArray(new String[0]), workingDir, echo);
+        return run(fixed.toArray(new String[0]), workingDir, progress);
     }
 
-    static String run(String[] cmd, File workingDir, boolean echo) {
+    static String run(String[] cmd, File workingDir, Consumer<String> progress) {
         try {
             List<String> args = Arrays.asList(cmd);
             ProcessBuilder processBuilder = new ProcessBuilder(args);
@@ -32,7 +34,7 @@ public class RunCommand {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                logger.info(line);
+                progress.accept(line);
             }
 
             process.waitFor();

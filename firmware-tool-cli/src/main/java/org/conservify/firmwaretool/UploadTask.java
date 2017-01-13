@@ -2,12 +2,11 @@ package org.conservify.firmwaretool;
 
 import org.apache.commons.cli.CommandLine;
 import org.conservify.firmwaretool.distribution.*;
-import org.conservify.firmwaretool.uploading.DiscoveredPort;
-import org.conservify.firmwaretool.uploading.PortChooser;
-import org.conservify.firmwaretool.uploading.Uploader;
-import org.conservify.firmwaretool.uploading.UploaderConfig;
+import org.conservify.firmwaretool.uploading.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 public class UploadTask extends Task {
     private static final Logger logger = LoggerFactory.getLogger(UploadTask.class);
@@ -22,7 +21,14 @@ public class UploadTask extends Task {
         if (binary == null) {
             throw new RuntimeException("Unable to find binary for " + deviceName);
         }
-        upload(binary);
+
+        UploaderConfig config = new UploaderConfig();
+        config.setToolsPath("tools");
+        config.setCommandLine("\"{path}/{cmd}\" -i -d --port={port} -U true -i -e -w -v \"{binary}\" -R");
+        config.setUse1200bpsTouch(true);
+
+        Uploader uploader = new Uploader(new Slf4jPortDiscovery());
+        uploader.upload(binary.getBinary(), config);
     }
 
     private CachedBinary findBinary(String deviceName) {
@@ -38,48 +44,5 @@ public class UploadTask extends Task {
             }
         }
         return null;
-    }
-
-    private void upload(CachedBinary localPath) {
-        SettingsCache settings = SettingsCache.get();
-        DiscoveredPort port = getPort(settings);
-        if (port != null) {
-            UploaderConfig config = new UploaderConfig();
-            config.setCommandLine("\"{bossac}\" -i -d --port={port} -U true -i -e -w -v \"{binary}\" -R");
-            config.setUse1200bpsTouch(true);
-
-            Uploader uploader = new Uploader();
-            if (!port.isDiscovered()) {
-                PortChooser portChooser = new PortChooser();
-                logger.info("Performing 1200bps trick on {} to get {}...", port.getTouchPort(), port.getUploadPort());
-                port = portChooser.perform1200bpsTouch(port.getTouchPort());
-            }
-
-            if (uploader.upload(localPath.getBinary(), port.getUploadPort(), config)) {
-                settings.setLastUploadPort(port.getUploadPort());
-                settings.setLastTouchPort(port.getTouchPort());
-                settings.save();
-            }
-        }
-    }
-
-    static DiscoveredPort getPort(SettingsCache settings) {
-        PortChooser portChooser = new PortChooser();
-
-        if (settings.getLastUploadPort() != null) {
-            if (portChooser.exists(settings.getLastTouchPort()) && !portChooser.exists(settings.getLastUploadPort())) {
-                logger.info("Using {}", settings.getLastUploadPort());
-                return new DiscoveredPort(settings.getLastUploadPort(), settings.getLastTouchPort(), false);
-            }
-
-            if (!portChooser.exists(settings.getLastTouchPort()) && portChooser.exists(settings.getLastUploadPort())) {
-                logger.info("Using {}", settings.getLastUploadPort());
-                return new DiscoveredPort(settings.getLastUploadPort(), settings.getLastTouchPort(), true);
-            }
-
-            logger.info("No such port {}", settings.getLastUploadPort());
-        }
-
-        return portChooser.discoverPort(null, false);
     }
 }

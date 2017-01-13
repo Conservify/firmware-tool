@@ -1,4 +1,4 @@
-package org.conservify.firmwaretool;
+package org.conservify.firmwaretool.util;
 
 import org.apache.commons.io.IOUtils;
 
@@ -56,8 +56,12 @@ public class SettingsCache {
             FileOutputStream stream = new FileOutputStream("project.properties");
             try {
                 Properties properties = new Properties();
-                properties.put(LAST_UPLOAD_PORT, this.lastUploadPort);
-                properties.put(LAST_TOUCH_PORT, this.lastTouchPort);
+                if (lastUploadPort != null) {
+                    properties.put(LAST_UPLOAD_PORT, lastUploadPort);
+                }
+                if (lastTouchPort != null) {
+                    properties.put(LAST_TOUCH_PORT, this.lastTouchPort);
+                }
                 properties.store(stream, "");
                 stream.close();
             } finally {

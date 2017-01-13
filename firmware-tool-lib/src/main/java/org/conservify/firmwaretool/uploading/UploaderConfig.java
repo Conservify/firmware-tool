@@ -3,6 +3,7 @@ package org.conservify.firmwaretool.uploading;
 public class UploaderConfig {
     private boolean use1200bpsTouch;
     private String commandLine;
+    private String toolsPath;
 
     public boolean isUse1200bpsTouch() {
         return use1200bpsTouch;
@@ -18,5 +19,13 @@ public class UploaderConfig {
 
     public void setCommandLine(String commandLine) {
         this.commandLine = commandLine;
+    }
+
+    public String getToolsPath() {
+        return toolsPath;
+    }
+
+    public void setToolsPath(String toolsPath) {
+        this.toolsPath = toolsPath;
     }
 }
