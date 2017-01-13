@@ -6,10 +6,8 @@ import org.conservify.firmwaretool.util.SettingsCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sound.sampled.Port;
 import java.io.File;
 import java.util.Properties;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,15 +60,18 @@ public class Uploader {
         return sb.toString();
     }
 
-    public DiscoveredPort upload(File binary, UploaderConfig config) {
+    public DevicePorts upload(File binary, UploaderConfig config) {
         SettingsCache settings = SettingsCache.get();
-        DiscoveredPort port = getPort(settings);
+        DevicePorts port = getPort(settings);
         if (port != null) {
             Uploader uploader = new Uploader(portDiscoveryInteraction);
             if (!port.isDiscovered()) {
                 PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
                 portDiscoveryInteraction.onProgress(String.format("Performing 1200bps trick on %s to get %s...", port.getTouchPort(), port.getUploadPort()));
                 port = portChooser.perform1200bpsTouch(port.getTouchPort());
+                if (port == null) {
+                    throw new RuntimeException("1200bps trick failed");
+                }
             }
 
             if (uploader.upload(binary, port.getUploadPort(), config)) {
@@ -82,18 +83,18 @@ public class Uploader {
         return port;
     }
 
-    DiscoveredPort getPort(SettingsCache settings) {
+    DevicePorts getPort(SettingsCache settings) {
         PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
 
         if (settings.getLastUploadPort() != null) {
             if (portChooser.exists(settings.getLastTouchPort()) && !portChooser.exists(settings.getLastUploadPort())) {
-                portDiscoveryInteraction.onProgress(String.format("Using %s", settings.getLastUploadPort()));
-                return new DiscoveredPort(settings.getLastUploadPort(), settings.getLastTouchPort(), false);
+                portDiscoveryInteraction.onProgress(String.format("Will try touching %s to get %s", settings.getLastUploadPort(), settings.getLastUploadPort()));
+                return new DevicePorts(settings.getLastUploadPort(), settings.getLastTouchPort(), false);
             }
 
             if (!portChooser.exists(settings.getLastTouchPort()) && portChooser.exists(settings.getLastUploadPort())) {
                 portDiscoveryInteraction.onProgress(String.format("Using %s", settings.getLastUploadPort()));
-                return new DiscoveredPort(settings.getLastUploadPort(), settings.getLastTouchPort(), true);
+                return new DevicePorts(settings.getLastUploadPort(), settings.getLastTouchPort(), true);
             }
 
             logger.info("No such port {}", settings.getLastUploadPort());

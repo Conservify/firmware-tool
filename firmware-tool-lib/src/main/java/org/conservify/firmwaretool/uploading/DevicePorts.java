@@ -1,6 +1,6 @@
 package org.conservify.firmwaretool.uploading;
 
-public class DiscoveredPort {
+public class DevicePorts {
     private String uploadPort;
     private String touchPort;
     private boolean discovered;
@@ -17,7 +17,7 @@ public class DiscoveredPort {
         return discovered;
     }
 
-    public DiscoveredPort(String likelyPort, String touchPort, boolean discovered) {
+    public DevicePorts(String likelyPort, String touchPort, boolean discovered) {
         this.uploadPort = likelyPort;
         this.touchPort = touchPort;
         this.discovered = discovered;

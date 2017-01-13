@@ -14,7 +14,7 @@ public class PortChooser {
         this.portDiscoveryInteraction = portDiscoveryInteraction;
     }
 
-    public DiscoveredPort perform1200bpsTouch(String portName){
+    public DevicePorts perform1200bpsTouch(String portName){
         try {
             SerialPort serialPort = SerialPort.getCommPort(portName);
             serialPort.setBaudRate(1200);
@@ -42,7 +42,7 @@ public class PortChooser {
         return false;
     }
 
-    private DiscoveredPort lookForNewPort(String[] portNamesBefore, int tries) throws InterruptedException {
+    private DevicePorts lookForNewPort(String[] portNamesBefore, int tries) throws InterruptedException {
         String candidatePort = null;
 
         while (tries-- > 0) {
@@ -55,15 +55,15 @@ public class PortChooser {
 
             if (newPorts.length > 0) {
                 if (missingPorts.length > 0) {
-                    return new DiscoveredPort(newPorts[0], missingPorts[0], true);
+                    return new DevicePorts(newPorts[0], missingPorts[0], true);
                 }
-                return new DiscoveredPort(newPorts[0], null, true);
+                return new DevicePorts(newPorts[0], null, true);
             }
             else if (missingPorts.length > 0) {
                 candidatePort = missingPorts[0];
             }
             else if (candidatePort != null) {
-                return new DiscoveredPort(candidatePort, null, true);
+                return new DevicePorts(candidatePort, null, true);
             }
         }
 
@@ -77,10 +77,10 @@ public class PortChooser {
         return a.toArray(new String[0]);
     }
 
-    public DiscoveredPort discoverPort(String specifiedPort, boolean perform1200bpsTouch) {
+    public DevicePorts discoverPort(String specifiedPort, boolean perform1200bpsTouch) {
         try {
             String newPort = specifiedPort;
-            DiscoveredPort ports = null;
+            DevicePorts ports = null;
             if (perform1200bpsTouch && specifiedPort != null) {
                 ports = perform1200bpsTouch(specifiedPort);
                 if (ports == null) {
@@ -90,14 +90,14 @@ public class PortChooser {
 
             if (ports == null) {
                 portDiscoveryInteraction.onBeginning();
-                DiscoveredPort found = lookForNewPort(getPortNames(), 20);
+                DevicePorts found = lookForNewPort(getPortNames(), 20);
                 if (found != null) {
                     return found;
                 }
                 return null;
             }
 
-            return new DiscoveredPort(newPort, null, true);
+            return new DevicePorts(newPort, null, true);
         }
         catch (InterruptedException e) {
             throw new RuntimeException(e);
