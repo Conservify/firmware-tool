@@ -34,7 +34,7 @@ public class SettingsCache {
     public static SettingsCache get() {
         SettingsCache settings = new SettingsCache();
         try {
-            if (new File("project.properties").isFile()) {
+            if (new File("firmwaretool.properties").isFile()) {
                 FileInputStream stream = new FileInputStream("project.properties");
                 try {
                     Properties properties = new Properties();
@@ -53,7 +53,7 @@ public class SettingsCache {
 
     public void save() {
         try {
-            FileOutputStream stream = new FileOutputStream("project.properties");
+            FileOutputStream stream = new FileOutputStream("firmwaretool.properties");
             try {
                 Properties properties = new Properties();
                 if (lastUploadPort != null) {

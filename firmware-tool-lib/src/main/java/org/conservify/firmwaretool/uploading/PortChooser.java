@@ -42,41 +42,6 @@ public class PortChooser {
         return false;
     }
 
-    private DevicePorts lookForNewPort(String[] portNamesBefore, int tries) throws InterruptedException {
-        String candidatePort = null;
-
-        while (tries-- > 0) {
-            Thread.sleep(500);
-            String[] portNamesNow = getPortNames();
-            String[] missingPorts = difference(portNamesBefore, portNamesNow);
-            String[] newPorts = difference(portNamesNow, portNamesBefore);
-
-            portDiscoveryInteraction.onPortStatus(portNamesBefore, portNamesNow, missingPorts, newPorts);
-
-            if (newPorts.length > 0) {
-                if (missingPorts.length > 0) {
-                    return new DevicePorts(newPorts[0], missingPorts[0], true);
-                }
-                return new DevicePorts(newPorts[0], null, true);
-            }
-            else if (missingPorts.length > 0) {
-                candidatePort = missingPorts[0];
-            }
-            else if (candidatePort != null) {
-                return new DevicePorts(candidatePort, null, true);
-            }
-        }
-
-        return null;
-    }
-
-    private String[] difference(String[] before, String[] after) {
-        Set<String> a = new HashSet<String>();
-        a.addAll(Arrays.asList(before));
-        a.removeAll(Arrays.asList(after));
-        return a.toArray(new String[0]);
-    }
-
     public DevicePorts discoverPort(String specifiedPort, boolean perform1200bpsTouch) {
         try {
             String newPort = specifiedPort;
@@ -116,5 +81,40 @@ public class PortChooser {
     public boolean exists(String portName) {
         List<String> portNames = Arrays.asList(getPortNames());
         return portNames.contains(portName);
+    }
+
+    private DevicePorts lookForNewPort(String[] portNamesBefore, int tries) throws InterruptedException {
+        String candidatePort = null;
+
+        while (tries-- > 0) {
+            Thread.sleep(500);
+            String[] portNamesNow = getPortNames();
+            String[] missingPorts = difference(portNamesBefore, portNamesNow);
+            String[] newPorts = difference(portNamesNow, portNamesBefore);
+
+            portDiscoveryInteraction.onPortStatus(portNamesBefore, portNamesNow, missingPorts, newPorts);
+
+            if (newPorts.length > 0) {
+                if (missingPorts.length > 0) {
+                    return new DevicePorts(newPorts[0], missingPorts[0], true);
+                }
+                return new DevicePorts(newPorts[0], null, true);
+            }
+            else if (missingPorts.length > 0) {
+                candidatePort = missingPorts[0];
+            }
+            else if (candidatePort != null) {
+                return new DevicePorts(candidatePort, null, true);
+            }
+        }
+
+        return null;
+    }
+
+    private String[] difference(String[] before, String[] after) {
+        Set<String> a = new HashSet<String>();
+        a.addAll(Arrays.asList(before));
+        a.removeAll(Arrays.asList(after));
+        return a.toArray(new String[0]);
     }
 }
