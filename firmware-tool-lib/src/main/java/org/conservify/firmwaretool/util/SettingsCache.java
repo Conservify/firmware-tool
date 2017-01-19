@@ -35,7 +35,7 @@ public class SettingsCache {
         SettingsCache settings = new SettingsCache();
         try {
             if (new File("firmwaretool.properties").isFile()) {
-                FileInputStream stream = new FileInputStream("project.properties");
+                FileInputStream stream = new FileInputStream("firmwaretool.properties");
                 try {
                     Properties properties = new Properties();
                     properties.load(stream);
