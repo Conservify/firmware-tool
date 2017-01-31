@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,18 +35,28 @@ public class Uploader {
         properties.put("build.project_name", FilenameUtils.removeExtension(binary.getName()));
         properties.put("serial.port.file", port);
 
+        properties.put("cmd.path", config.getToolsPath().toString().replace("\\", "/"));
+        properties.put("serial.port", port);
+        properties.put("upload.verify", "-v");
+
         String populated = replace(properties, command);
-        logger.info(populated);
+
         RunCommand.run(populated, new File("."), line -> portDiscoveryInteraction.onProgress(line));
         return true;
     }
 
-
     private String getKey(Properties props, String key) {
         if (!props.containsKey(key)) {
-            return "{" + key + "}";
+            return "{missing: " + key + "}";
         }
-        return this.replace(props, (String)props.get(key));
+
+        Properties newProperties = new Properties();
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            if (!entry.getKey().equals(key)) {
+                newProperties.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return this.replace(newProperties, (String)props.get(key));
     }
 
     private String replace(Properties props, String value) {
