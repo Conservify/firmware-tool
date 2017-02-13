@@ -31,16 +31,19 @@ public class Uploader {
             properties.put("cmd", "bossac_osx");
         }
         properties.put("upload.verbose", "-i -d");
+        properties.put("binary", binary.toString().replace("\\", "/"));
         properties.put("build.path", binary.getParent().toString().replace("\\", "/"));
         properties.put("build.project_name", FilenameUtils.removeExtension(binary.getName()));
         properties.put("serial.port.file", port);
 
         properties.put("cmd.path", config.getToolsPath().toString().replace("\\", "/"));
         properties.put("serial.port", port);
+        properties.put("port", port);
         properties.put("upload.verify", "-v");
 
         String populated = replace(properties, command);
 
+        logger.info(populated);
         RunCommand.run(populated, new File("."), line -> portDiscoveryInteraction.onProgress(line));
         return true;
     }
