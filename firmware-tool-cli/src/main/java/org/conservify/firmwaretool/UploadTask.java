@@ -23,7 +23,7 @@ public class UploadTask extends Task {
         }
 
         UploaderConfig config = new UploaderConfig();
-        config.setToolsPath("tools");
+        config.setToolsPath(findToolsPath());
         config.setCommandLine("\"{path}/{cmd}\" -i -d --port={port} -U true -i -e -w -v \"{binary}\" -R");
         config.setUse1200bpsTouch(true);
 
@@ -44,5 +44,20 @@ public class UploadTask extends Task {
             }
         }
         return null;
+    }
+
+    private File findToolsPath() {
+        File[] candidates = {
+            new File("../tools"),
+            new File("tools")
+        };
+
+        for (File path : candidates) {
+           if (path.isDirectory())  {
+               return path;
+           }
+        }
+
+        throw new RuntimeException("Unable to find Tools directory.");
     }
 }

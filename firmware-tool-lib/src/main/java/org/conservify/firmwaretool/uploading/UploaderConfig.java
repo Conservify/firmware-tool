@@ -1,9 +1,11 @@
 package org.conservify.firmwaretool.uploading;
 
+import java.io.File;
+
 public class UploaderConfig {
     private boolean use1200bpsTouch;
     private String commandLine;
-    private String toolsPath;
+    private File toolsPath;
 
     public boolean isUse1200bpsTouch() {
         return use1200bpsTouch;
@@ -21,11 +23,11 @@ public class UploaderConfig {
         this.commandLine = commandLine;
     }
 
-    public String getToolsPath() {
+    public File getToolsPath() {
         return toolsPath;
     }
 
-    public void setToolsPath(String toolsPath) {
+    public void setToolsPath(File toolsPath) {
         this.toolsPath = toolsPath;
     }
 }
