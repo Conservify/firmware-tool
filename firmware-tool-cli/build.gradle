@@ -8,6 +8,16 @@ run {
 
 mainClassName = "org.conservify.firmwaretool.Main"
 
+distributions {
+    main {
+        contents {
+            into("tools") {
+                from { '../tools' }
+            }
+        }
+    }
+}
+
 dependencies {
     compile group: 'commons-cli', name: 'commons-cli', version: '1.3.1'
 

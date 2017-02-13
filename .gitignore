@@ -6,3 +6,4 @@ project.properties
 build
 firmwaretool.log
 *.iml
+firmwaretool.properties
