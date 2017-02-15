@@ -1,3 +1,4 @@
 alias ft-help="gradle run -PappArgs=\"['--help']\""
 alias ft-blink="gradle run -PappArgs=\"['-d', 'arduino-gradle-examples', '-upload']\""
+alias ft-collector="gradle run -PappArgs=\"['-d', 'okavango/collector', '-upload']\""
 alias ft-download="gradle run -PappArgs=\"['--download']\""
