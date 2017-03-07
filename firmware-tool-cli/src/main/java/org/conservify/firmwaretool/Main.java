@@ -29,7 +29,14 @@ public class Main {
         }
 
         if (cmd.hasOption("upload")) {
-            new UploadTask().run(cmd);
+            UploadTask task = new UploadTask();
+            task.run(cmd);
+
+            if (cmd.hasOption("monitor")) {
+                MonitorTask monitor = new MonitorTask();
+                monitor.setPorts(task.getPorts());
+                monitor.run(cmd);
+            }
         }
         else if (cmd.hasOption("download")) {
             new DownloadAllTask().run(cmd);

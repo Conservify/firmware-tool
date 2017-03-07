@@ -1,6 +1,8 @@
 package org.conservify.firmwaretool.uploading;
 
-import com.fazecast.jSerialComm.*;
+import jssc.SerialPort;
+import jssc.SerialPortException;
+import jssc.SerialPortList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +18,23 @@ public class PortChooser {
 
     public DevicePorts perform1200bpsTouch(String portName){
         try {
-            SerialPort serialPort = SerialPort.getCommPort(portName);
-            serialPort.setBaudRate(1200);
-            boolean opened = serialPort.openPort();
-            if (opened) {
+            SerialPort serialPort = new SerialPort(portName);
+            try {
+                serialPort.openPort();
+                serialPort.setParams(1200, 8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+                serialPort.setDTR(false);
                 serialPort.closePort();
                 return lookForNewPort(getPortNames(), 5);
-            }
-            else {
-                throw new RuntimeException(String.format("Unable to open %s, check permissions or for another process.", portName));
+            } catch (SerialPortException e) {
+                throw new RuntimeException(String.format("Error touching serial port ''%s''.", portName));
+            } finally {
+                if (serialPort.isOpened()) {
+                    try {
+                        serialPort.closePort();
+                    } catch (SerialPortException e) {
+                        // Ignore
+                    }
+                }
             }
         }
         catch (InterruptedException e) {
@@ -71,12 +81,7 @@ public class PortChooser {
     }
 
     private String[] getPortNames() {
-        SerialPort[] currentPorts = SerialPort.getCommPorts();
-        ArrayList<String> names = new ArrayList<String>();
-        for (SerialPort port : currentPorts) {
-            names.add(port.getSystemPortName());
-        }
-        return names.toArray(new String[0]);
+        return SerialPortList.getPortNames();
     }
 
     public boolean exists(String portName) {

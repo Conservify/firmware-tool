@@ -10,6 +10,15 @@ import java.io.File;
 
 public class UploadTask extends Task {
     private static final Logger logger = LoggerFactory.getLogger(UploadTask.class);
+    private DevicePorts ports;
+
+    public DevicePorts getPorts() {
+        return ports;
+    }
+
+    public void setPorts(DevicePorts ports) {
+        this.ports = ports;
+    }
 
     @Override
     void run(CommandLine cmd) {
@@ -37,7 +46,7 @@ public class UploadTask extends Task {
         }
 
         Uploader uploader = new Uploader(new Slf4jPortDiscovery());
-        uploader.upload(binary.getBinary(), config);
+        ports = uploader.upload(binary.getBinary(), config);
     }
 
     private CachedBinary findBinary(String deviceName) {
