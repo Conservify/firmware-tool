@@ -3,6 +3,7 @@ package org.conservify.firmwaretool;
 import org.apache.commons.cli.CommandLine;
 import org.conservify.firmwaretool.distribution.*;
 import org.conservify.firmwaretool.uploading.*;
+import org.conservify.firmwaretool.util.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,14 @@ public class UploadTask extends Task {
 
         UploaderConfig config = new UploaderConfig();
         config.setToolsPath(findToolsPath());
-        config.setCommandLine("\"{path}/{cmd}\" -i -d --port={port} -U true -i -e -w -v \"{binary}\" -R");
+
+        // This is a mystery to me, but specifying the port here doesn't work.
+        if (Platform.isArm()) {
+            config.setCommandLine("\"{path}/{cmd}\" -i -d -U true -e -w -v \"{binary}\" -R");
+        }
+        else {
+            config.setCommandLine("\"{path}/{cmd}\" -i -d --port={port} -U true -e -w -v \"{binary}\" -R");
+        }
 
         if (cmd.hasOption("port")) {
             config.setPort(cmd.getOptionValue("port"));

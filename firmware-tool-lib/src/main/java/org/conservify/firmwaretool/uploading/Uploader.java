@@ -1,6 +1,7 @@
 package org.conservify.firmwaretool.uploading;
 
 import org.apache.commons.io.FilenameUtils;
+import org.conservify.firmwaretool.util.Platform;
 import org.conservify.firmwaretool.util.RunCommand;
 import org.conservify.firmwaretool.util.SettingsCache;
 import org.slf4j.Logger;
@@ -21,20 +22,15 @@ public class Uploader {
     }
 
     public boolean upload(File binary, String port, UploaderConfig config) {
-        String os = System.getProperty("os.name");
-        String arch = System.getProperty("os.arch");
-
-        logger.info(String.format("%s-%s", os, arch));
-
         String command = config.getCommandLine();
         Properties properties = new Properties();
         properties.put("path", config.getToolsPath().toString().replace("\\", "/"));
-        if (os.toLowerCase().contains("win")) {
+        if (Platform.isWindows()) {
             properties.put("cmd", "bossac.exe");
         }
         else {
-            if (os.toLowerCase().contains("linux")) {
-                if (arch.toLowerCase().contains("arm")) {
+            if (Platform.isLinux()) {
+                if (Platform.isArm()) {
                     properties.put("cmd", "bossac_linux_arm");
                 }
                 else {
