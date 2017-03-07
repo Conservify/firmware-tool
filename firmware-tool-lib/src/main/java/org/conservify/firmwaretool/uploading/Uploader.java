@@ -24,7 +24,7 @@ public class Uploader {
         String os = System.getProperty("os.name");
         String arch = System.getProperty("os.arch");
 
-        logger.info(String.format("os: %s arch: %s", os, arch));
+        logger.info(String.format("%s-%s", os, arch));
 
         String command = config.getCommandLine();
         Properties properties = new Properties();

@@ -23,6 +23,7 @@ public class PortChooser {
                 serialPort.openPort();
                 serialPort.setParams(1200, 8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
                 serialPort.setDTR(false);
+                Thread.sleep(500);
                 serialPort.closePort();
                 return lookForNewPort(getPortNames(), 5);
             } catch (SerialPortException e) {
