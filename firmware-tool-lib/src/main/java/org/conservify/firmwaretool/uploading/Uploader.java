@@ -45,11 +45,15 @@ public class Uploader {
         properties.put("binary", binary.toString().replace("\\", "/"));
         properties.put("build.path", binary.getParent().toString().replace("\\", "/"));
         properties.put("build.project_name", FilenameUtils.removeExtension(binary.getName()));
-        properties.put("serial.port.file", port);
 
         properties.put("cmd.path", config.getToolsPath().toString().replace("\\", "/"));
-        properties.put("serial.port", port);
-        properties.put("port", port);
+
+        properties.put("serial.port.file", port);
+        properties.put("port.file", port);
+
+        properties.put("serial.port.name", FilenameUtils.getName(port));
+        properties.put("port.name", FilenameUtils.getName(port));
+
         properties.put("upload.verify", "-v");
 
         String populated = replace(properties, command);

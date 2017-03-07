@@ -35,12 +35,12 @@ public class UploadTask extends Task {
         UploaderConfig config = new UploaderConfig();
         config.setToolsPath(findToolsPath());
 
-        // This is a mystery to me, but specifying the port here doesn't work.
+        // Eventually clean this up.
         if (Platform.isArm()) {
-            config.setCommandLine("\"{path}/{cmd}\" -i -d -U true -e -w -v \"{binary}\" -R");
+            config.setCommandLine("\"{path}/{cmd}\" -i -d -p {port.name} -U true -e -w -v \"{binary}\" -R");
         }
         else {
-            config.setCommandLine("\"{path}/{cmd}\" -i -d --port={port} -U true -e -w -v \"{binary}\" -R");
+            config.setCommandLine("\"{path}/{cmd}\" -i -d -p {port.file} -U true -e -w -v \"{binary}\" -R");
         }
 
         if (cmd.hasOption("port")) {

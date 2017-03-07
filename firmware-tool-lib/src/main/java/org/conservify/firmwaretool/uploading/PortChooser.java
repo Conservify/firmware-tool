@@ -82,7 +82,13 @@ public class PortChooser {
     }
 
     private String[] getPortNames() {
-        return SerialPortList.getPortNames();
+        try {
+            return SerialPortList.getPortNames();
+        }
+        // This happens on windows, sometimes.
+        catch (NullPointerException e) {
+            return new String[0];
+        }
     }
 
     public boolean exists(String portName) {
