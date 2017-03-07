@@ -23,8 +23,9 @@ public class PortChooser {
                 serialPort.closePort();
                 return lookForNewPort(getPortNames(), 5);
             }
-
-            return null;
+            else {
+                throw new RuntimeException(String.format("Unable to open %s, check permissions or for another process.", portName));
+            }
         }
         catch (InterruptedException e) {
             throw new RuntimeException(e);

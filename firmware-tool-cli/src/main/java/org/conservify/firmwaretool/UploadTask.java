@@ -25,7 +25,16 @@ public class UploadTask extends Task {
         UploaderConfig config = new UploaderConfig();
         config.setToolsPath(findToolsPath());
         config.setCommandLine("\"{path}/{cmd}\" -i -d --port={port} -U true -i -e -w -v \"{binary}\" -R");
-        config.setUse1200bpsTouch(true);
+
+        if (cmd.hasOption("port")) {
+            config.setPort(cmd.getOptionValue("port"));
+            if (cmd.hasOption("touch")) {
+                config.setUse1200bpsTouch(true);
+            }
+        }
+        else {
+            config.setUse1200bpsTouch(true);
+        }
 
         Uploader uploader = new Uploader(new Slf4jPortDiscovery());
         uploader.upload(binary.getBinary(), config);

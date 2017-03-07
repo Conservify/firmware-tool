@@ -76,15 +76,15 @@ public class Uploader {
 
     public DevicePorts upload(File binary, UploaderConfig config) {
         SettingsCache settings = SettingsCache.get();
-        DevicePorts port = getPort(settings);
+        DevicePorts port = getPort(settings, config);
         if (port != null) {
             Uploader uploader = new Uploader(portDiscoveryInteraction);
-            if (!port.isDiscovered()) {
+            if (!port.isDiscovered() && port.getTouchPort() != null) {
                 PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
-                portDiscoveryInteraction.onProgress(String.format("Performing 1200bps trick on %s to get %s...", port.getTouchPort(), port.getUploadPort()));
+                portDiscoveryInteraction.onProgress(String.format("Performing 1200bps trick on %s...", port.getTouchPort()));
                 port = portChooser.perform1200bpsTouch(port.getTouchPort());
                 if (port == null) {
-                    throw new RuntimeException("1200bps trick failed");
+                    throw new RuntimeException("Oh no, the 1200bps trick failed. Is there a permissions problem or is the device open elsewhere?");
                 }
             }
 
@@ -97,8 +97,15 @@ public class Uploader {
         return port;
     }
 
-    DevicePorts getPort(SettingsCache settings) {
+    DevicePorts getPort(SettingsCache settings, UploaderConfig config) {
         PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
+
+        if (config.getPort() != null) {
+            if (config.isUse1200bpsTouch()) {
+                return new DevicePorts(null, config.getPort(), false);
+            }
+            return new DevicePorts(config.getPort(), null, false);
+        }
 
         if (settings.getLastUploadPort() != null) {
             if (portChooser.exists(settings.getLastTouchPort()) && !portChooser.exists(settings.getLastUploadPort())) {
