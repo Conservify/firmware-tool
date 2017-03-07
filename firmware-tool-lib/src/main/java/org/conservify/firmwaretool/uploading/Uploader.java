@@ -21,15 +21,25 @@ public class Uploader {
     }
 
     public boolean upload(File binary, String port, UploaderConfig config) {
+        String os = System.getProperty("os.name");
+        String arch = System.getProperty("os.arch");
+
+        logger.info(String.format("os: %s arch: %s", os, arch));
+
         String command = config.getCommandLine();
         Properties properties = new Properties();
         properties.put("path", config.getToolsPath().toString().replace("\\", "/"));
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+        if (os.toLowerCase().contains("win")) {
             properties.put("cmd", "bossac.exe");
         }
         else {
-            if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-                properties.put("cmd", "bossac_linux");
+            if (os.toLowerCase().contains("linux")) {
+                if (arch.toLowerCase().contains("arm")) {
+                    properties.put("cmd", "bossac_linux_arm");
+                }
+                else {
+                    properties.put("cmd", "bossac_linux");
+                }
             }
             else {
                 properties.put("cmd", "bossac_osx");
