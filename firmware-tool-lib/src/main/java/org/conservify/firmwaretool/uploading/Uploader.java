@@ -99,7 +99,12 @@ public class Uploader {
                 portDiscoveryInteraction.onProgress(String.format("Performing 1200bps trick on %s...", port.getTouchPort()));
                 port = portChooser.perform1200bpsTouch(port.getTouchPort());
                 if (port == null) {
-                    throw new RuntimeException("Oh no, the 1200bps trick failed. Is there a permissions problem or is the device open elsewhere?");
+                    if (config.getPort() != null) {
+                        port = new DevicePorts(config.getPort(), null, false);
+                    }
+                    else {
+                        throw new RuntimeException("Oh no, the 1200bps trick failed. Is there a permissions problem or is the device open elsewhere?");
+                    }
                 }
             }
 
