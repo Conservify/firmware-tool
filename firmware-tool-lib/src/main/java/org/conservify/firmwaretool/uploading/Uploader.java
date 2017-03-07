@@ -28,7 +28,12 @@ public class Uploader {
             properties.put("cmd", "bossac.exe");
         }
         else {
-            properties.put("cmd", "bossac_osx");
+            if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+                properties.put("cmd", "bossac_linux");
+            }
+            else {
+                properties.put("cmd", "bossac_osx");
+            }
         }
         properties.put("upload.verbose", "-i -d");
         properties.put("binary", binary.toString().replace("\\", "/"));
