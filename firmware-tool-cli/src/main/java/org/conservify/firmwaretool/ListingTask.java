@@ -1,6 +1,5 @@
 package org.conservify.firmwaretool;
 
-import org.apache.commons.cli.CommandLine;
 import org.conservify.firmwaretool.distribution.DeviceFirmware;
 import org.conservify.firmwaretool.distribution.DeviceFirmwareBinary;
 import org.conservify.firmwaretool.distribution.DistributionService;
@@ -11,7 +10,7 @@ public class ListingTask extends Task {
     private static final Logger logger = LoggerFactory.getLogger(ListingTask.class);
 
     @Override
-    void run(CommandLine cmd) {
+    void run(ToolOptions options) {
         DistributionService service = new DistributionService();
         for (DeviceFirmware device : service.getDeviceFirmwares()) {
             logger.info(device.toString());

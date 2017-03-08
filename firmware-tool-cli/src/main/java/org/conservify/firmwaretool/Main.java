@@ -5,6 +5,8 @@ import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.Tool;
+
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
@@ -20,6 +22,7 @@ public class Main {
 
         org.apache.commons.cli.CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
+        ToolOptions toolOptions = new ToolOptions(cmd);
 
         if (cmd.hasOption("help")) {
             System.out.println();
@@ -30,19 +33,19 @@ public class Main {
 
         if (cmd.hasOption("upload")) {
             UploadTask task = new UploadTask();
-            task.run(cmd);
+            task.run(toolOptions);
 
             if (cmd.hasOption("monitor")) {
                 MonitorTask monitor = new MonitorTask();
                 monitor.setPorts(task.getPorts());
-                monitor.run(cmd);
+                monitor.run(toolOptions);
             }
         }
         else if (cmd.hasOption("download")) {
-            new DownloadAllTask().run(cmd);
+            new DownloadTask().run(toolOptions);
         }
         else {
-            new ListingTask().run(cmd);
+            new ListingTask().run(toolOptions);
         }
     }
 }

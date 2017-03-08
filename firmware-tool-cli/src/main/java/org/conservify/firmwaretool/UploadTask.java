@@ -1,6 +1,5 @@
 package org.conservify.firmwaretool;
 
-import org.apache.commons.cli.CommandLine;
 import org.conservify.firmwaretool.distribution.*;
 import org.conservify.firmwaretool.uploading.*;
 import org.conservify.firmwaretool.util.Platform;
@@ -22,11 +21,9 @@ public class UploadTask extends Task {
     }
 
     @Override
-    void run(CommandLine cmd) {
-        if (!cmd.hasOption("device")) {
-            throw new RuntimeException("Missing command line argument: --device|-d");
-        }
-        String deviceName = cmd.getOptionValue("device");
+    void run(ToolOptions options) {
+        options.requireDeviceName();
+        String deviceName = options.getDeviceName();
         CachedBinary binary = findBinary(deviceName);
         if (binary == null) {
             throw new RuntimeException("Unable to find binary for " + deviceName);
@@ -43,9 +40,9 @@ public class UploadTask extends Task {
             config.setCommandLine("\"{path}/{cmd}\" -i -d -p {port.file} -U true -e -w -v \"{binary}\" -R");
         }
 
-        if (cmd.hasOption("port")) {
-            config.setPort(cmd.getOptionValue("port"));
-            if (cmd.hasOption("touch")) {
+        if (options.hasPort()) {
+            config.setPort(options.getPort());
+            if (options.shouldTouch()) {
                 config.setUse1200bpsTouch(true);
             }
         }
