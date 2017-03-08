@@ -27,7 +27,7 @@ public class PortChooser {
                 serialPort.closePort();
                 return lookForNewPort(getPortNames(), 5);
             } catch (SerialPortException e) {
-                throw new RuntimeException(String.format("Error touching serial port ''%s''.", portName));
+                throw new RuntimeException(String.format("Error touching serial port %s.", portName), e);
             } finally {
                 if (serialPort.isOpened()) {
                     try {
