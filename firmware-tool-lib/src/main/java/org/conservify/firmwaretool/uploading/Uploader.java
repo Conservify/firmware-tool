@@ -48,6 +48,7 @@ public class Uploader {
 
         properties.put("cmd.path", config.getToolsPath().toString().replace("\\", "/"));
 
+        properties.put("serial.port", port); // For avrdude
         properties.put("serial.port.file", port);
         properties.put("port.file", port);
 
