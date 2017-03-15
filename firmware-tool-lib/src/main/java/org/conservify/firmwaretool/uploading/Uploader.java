@@ -94,9 +94,9 @@ public class Uploader {
         SettingsCache settings = SettingsCache.get();
         DevicePorts port = getPort(settings, config);
         if (port != null) {
+            PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
             Uploader uploader = new Uploader(portDiscoveryInteraction);
-            if (!port.isDiscovered() && port.getTouchPort() != null) {
-                PortChooser portChooser = new PortChooser(portDiscoveryInteraction);
+            if (!port.isDiscovered() && port.getTouchPort() != null && portChooser.exists(port.getTouchPort())) {
                 portDiscoveryInteraction.onProgress(String.format("Performing 1200bps trick on %s...", port.getTouchPort()));
                 port = portChooser.perform1200bpsTouch(port.getTouchPort());
                 if (port == null) {
@@ -130,7 +130,7 @@ public class Uploader {
 
         if (settings.getLastUploadPort() != null) {
             if (portChooser.exists(settings.getLastTouchPort()) && !portChooser.exists(settings.getLastUploadPort())) {
-                portDiscoveryInteraction.onProgress(String.format("Will try touching %s to get %s", settings.getLastUploadPort(), settings.getLastUploadPort()));
+                portDiscoveryInteraction.onProgress(String.format("Will try touching %s to get %s", settings.getLastTouchPort(), settings.getLastUploadPort()));
                 return new DevicePorts(settings.getLastUploadPort(), settings.getLastTouchPort(), false);
             }
 
