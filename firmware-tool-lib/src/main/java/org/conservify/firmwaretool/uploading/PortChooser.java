@@ -20,12 +20,15 @@ public class PortChooser {
         try {
             SerialPort serialPort = new SerialPort(portName);
             try {
+                // Get this very early, so we can see the touched port disappear.
+                String[] portNamesBefore = getPortNames();
+
                 serialPort.openPort();
                 serialPort.setParams(1200, 8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
                 serialPort.setDTR(false);
                 Thread.sleep(500);
                 serialPort.closePort();
-                return lookForNewPort(getPortNames(), 5);
+                return lookForNewPort(portNamesBefore, 5);
             } catch (SerialPortException e) {
                 throw new RuntimeException(String.format("Error touching serial port %s.", portName), e);
             } finally {
