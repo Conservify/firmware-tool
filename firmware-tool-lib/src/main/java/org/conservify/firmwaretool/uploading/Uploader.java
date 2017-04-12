@@ -49,10 +49,16 @@ public class Uploader {
         properties.put("cmd.path", config.getToolsPath().toString().replace("\\", "/"));
 
         properties.put("serial.port", port); // For avrdude
-        properties.put("serial.port.file", port);
-        properties.put("port.file", port);
-
+        properties.put("serial.port.file",  port);
         properties.put("serial.port.name", FilenameUtils.getName(port));
+
+        if (Platform.isLinux() || Platform.isWindows()) {
+            properties.put("port.file", port);
+        }
+        else {
+            properties.put("port.file", FilenameUtils.getName(port));
+        }
+
         properties.put("port.name", FilenameUtils.getName(port));
 
         properties.put("upload.verify", "-v");
