@@ -15,11 +15,12 @@ import java.util.regex.Pattern;
 import java.io.IOException;
 
 public class DistributionService {
-    public DistributionService() {
+    private String distributionServerUrl;
+
+    public DistributionService(String distributionServerUrl) {
+        this.distributionServerUrl = distributionServerUrl;
         configure();
     }
-
-    private static String distributionServerUrl = "https://conservify.page5of4.com/distribution";
 
     public ArrayList<DeviceFirmware> getDeviceFirmwares() {
         try {

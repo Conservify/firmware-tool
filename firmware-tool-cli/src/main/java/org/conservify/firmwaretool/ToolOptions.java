@@ -34,4 +34,15 @@ public class ToolOptions {
     public boolean shouldTouch() {
         return cmd.hasOption("touch");
     }
+
+    public boolean disableSsl() {
+        return cmd.hasOption("disable-ssl");
+    }
+
+    public String getDistributionServerUrl() {
+        if (disableSsl()) {
+            return "http://conservify.page5of4.com/distribution";
+        }
+        return "https://conservify.page5of4.com/distribution";
+    }
 }

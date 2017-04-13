@@ -9,7 +9,7 @@ public class DownloadTask extends Task {
 
     @Override
     void run(ToolOptions options) {
-        DistributionService service = new DistributionService();
+        DistributionService service = new DistributionService(options.getDistributionServerUrl());
         BinaryCache binaryCache = new BinaryCache();
         for (DeviceFirmware device : service.getDeviceFirmwares()) {
             if (!options.hasDeviceName() || options.getDeviceName().equals(device.getName())) {

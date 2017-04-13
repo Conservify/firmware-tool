@@ -24,7 +24,7 @@ public class UploadTask extends Task {
     void run(ToolOptions options) {
         options.requireDeviceName();
         String deviceName = options.getDeviceName();
-        CachedBinary binary = findBinary(deviceName);
+        CachedBinary binary = findBinary(options, deviceName);
         if (binary == null) {
             throw new RuntimeException("Unable to find binary for " + deviceName);
         }
@@ -54,8 +54,8 @@ public class UploadTask extends Task {
         ports = uploader.upload(binary.getBinary(), config);
     }
 
-    private CachedBinary findBinary(String deviceName) {
-        DistributionService service = new DistributionService();
+    private CachedBinary findBinary(ToolOptions options, String deviceName) {
+        DistributionService service = new DistributionService(options.getDistributionServerUrl());
         BinaryCache binaryCache = new BinaryCache();
         for (DeviceFirmware device : service.getDeviceFirmwares()) {
             if (deviceName.equals(device.getName())) {

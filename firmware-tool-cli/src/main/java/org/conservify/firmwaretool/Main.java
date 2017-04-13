@@ -15,6 +15,7 @@ public class Main {
         options.addOption("d", "device", true, "the kind of device to flash, source of the binary images");
         options.addOption("p", "port", true, "the port to use");
         options.addOption(null, "touch", false, "force a 1200baud touch");
+        options.addOption(null, "disable-ssl", false, "disable ssl");
         options.addOption(null, "upload", false, "perform upload");
         options.addOption(null, "monitor", false, "open serial monitor");
         options.addOption(null, "download", false, "locally cache binaries");

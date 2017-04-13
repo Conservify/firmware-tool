@@ -11,7 +11,7 @@ public class ListingTask extends Task {
 
     @Override
     void run(ToolOptions options) {
-        DistributionService service = new DistributionService();
+        DistributionService service = new DistributionService(options.getDistributionServerUrl());
         for (DeviceFirmware device : service.getDeviceFirmwares()) {
             logger.info(device.toString());
             for (DeviceFirmwareBinary binary : service.getFirmwareBinaries(device)) {
