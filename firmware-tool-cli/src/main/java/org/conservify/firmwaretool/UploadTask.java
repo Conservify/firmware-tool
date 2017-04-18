@@ -30,7 +30,7 @@ public class UploadTask extends Task {
         }
 
         UploaderConfig config = new UploaderConfig();
-        config.setToolsPath(findToolsPath());
+        config.setToolsPath(options.getToolsPath());
 
         // Eventually clean this up.
         if (Platform.isArm()) {
@@ -67,20 +67,5 @@ public class UploadTask extends Task {
             }
         }
         return null;
-    }
-
-    private File findToolsPath() {
-        File[] candidates = {
-            new File("../tools"),
-            new File("tools")
-        };
-
-        for (File path : candidates) {
-           if (path.isDirectory())  {
-               return path;
-           }
-        }
-
-        throw new RuntimeException("Unable to find Tools directory.");
     }
 }

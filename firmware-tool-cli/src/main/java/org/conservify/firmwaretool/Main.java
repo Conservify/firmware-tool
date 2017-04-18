@@ -19,6 +19,7 @@ public class Main {
         options.addOption(null, "upload", false, "perform upload");
         options.addOption(null, "monitor", false, "open serial monitor");
         options.addOption(null, "download", false, "locally cache binaries");
+        options.addOption(null, "tools-path", true, "path to flashing tools directory");
         options.addOption(null, "help", false, "display this message");
 
         org.apache.commons.cli.CommandLineParser parser = new DefaultParser();
