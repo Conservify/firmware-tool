@@ -50,9 +50,9 @@ public class ToolOptions {
 
     public String getDistributionServerUrl() {
         if (disableSsl()) {
-            return "http://conservify.page5of4.com/distribution";
+            return "http://code.conservify.org/distribution";
         }
-        return "https://conservify.page5of4.com/distribution";
+        return "https://code.conservify.org/distribution";
     }
 
     private File findToolsPath() {

@@ -12,7 +12,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven {
-            url "https://conservify.page5of4.com/nexus/content/groups/public"
+            url "https://code.conservify.org/nexus/content/groups/public"
         }
     }
 
@@ -21,7 +21,7 @@ subprojects {
             mavenLocal()
             if (project.hasProperty("mavenUser") && project.hasProperty("mavenPassword")) {
                 mavenDeployer {
-                    repository(url: "https://conservify.page5of4.com/nexus/content/repositories/snapshots") {
+                    repository(url: "https://code.conservify.org/nexus/content/repositories/snapshots") {
                         authentication(userName: mavenUser, password: mavenPassword)
                     }
                     pom.version = "1.0-SNAPSHOT"
