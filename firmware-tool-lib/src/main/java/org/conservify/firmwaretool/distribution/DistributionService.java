@@ -8,13 +8,19 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import java.io.IOException;
 
 public class DistributionService {
+    private static final Logger logger = LoggerFactory.getLogger(DistributionService.class);
     private String distributionServerUrl;
 
     public DistributionService(String distributionServerUrl) {
@@ -66,7 +72,7 @@ public class DistributionService {
         return Pattern.matches("\\d{8}+_\\d{6}+", entry.getName());
     }
 
-    public ArrayList<DeviceFirmwareBinary> getFirmwareBinaries(DeviceFirmware deviceFirmware) {
+    public ArrayList<DeviceFirmwareBinary> getFirmwareBinaries(DeviceFirmware deviceFirmware, boolean onlyLatest) {
         try {
             ArrayList<String> searchUrls = new ArrayList<String>();
             ArrayList<DeviceFirmwareBinary> binaries = new ArrayList<DeviceFirmwareBinary>();
@@ -85,10 +91,8 @@ public class DistributionService {
                     binaries.add(createBinary(deviceFirmware, artifactDirectory));
                 }
                 else {
-                    for (DirectoryListingEntry entry : response.getBody()) {
-                        if (shouldWalk(entry)) {
-                            searchUrls.add(url + "/" + entry.getName());
-                        }
+                    for (DirectoryListingEntry entry : getBinariesToScan(response.getBody(), onlyLatest)) {
+                        searchUrls.add(url + "/" + entry.getName());
                     }
                 }
             }
@@ -100,6 +104,37 @@ public class DistributionService {
         catch (UnirestException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static SimpleDateFormat DIRECTORY_TIME_FORMAT = new SimpleDateFormat("yyyyMMdd_hhmmss");
+
+    List<DirectoryListingEntry> getBinariesToScan(DirectoryListingEntry[] entries, boolean onlyLatest) {
+        List<DirectoryListingEntry> filtered = new ArrayList<DirectoryListingEntry>();
+        for (DirectoryListingEntry entry : entries) {
+            if (shouldWalk(entry)) {
+                filtered.add(entry);
+            }
+        }
+        Collections.sort(filtered, new Comparator<DirectoryListingEntry>() {
+            @Override
+            public int compare(DirectoryListingEntry o1, DirectoryListingEntry o2) {
+                try {
+                    Date d1 = DIRECTORY_TIME_FORMAT.parse(o1.getName());
+                    Date d2 = DIRECTORY_TIME_FORMAT.parse(o2.getName());
+                    return d1.compareTo(d2);
+                } catch (ParseException e) {
+                    return 0;
+                }
+            }
+        });
+
+        if (onlyLatest) {
+            while (filtered.size() > 1) {
+                filtered.remove(0);
+            }
+        }
+
+        return filtered;
     }
 
     ArtifactDirectory isArtifactDirectory(String directoryUrl, DirectoryListingEntry[] entries) {

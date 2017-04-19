@@ -41,6 +41,8 @@ public class ToolOptions {
         return cmd.hasOption("disable-ssl");
     }
 
+    public boolean shouldListOldVersions() { return cmd.hasOption("all"); }
+
     public File getToolsPath() {
         if (cmd.hasOption("tools-path")) {
             return new File(cmd.getOptionValue("tools-path"));

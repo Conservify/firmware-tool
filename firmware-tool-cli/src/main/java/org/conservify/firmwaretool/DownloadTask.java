@@ -14,7 +14,7 @@ public class DownloadTask extends Task {
         for (DeviceFirmware device : service.getDeviceFirmwares()) {
             if (!options.hasDeviceName() || options.getDeviceName().equals(device.getName())) {
                 logger.info(device.toString());
-                for (DeviceFirmwareBinary binary : service.getFirmwareBinaries(device)) {
+                for (DeviceFirmwareBinary binary : service.getFirmwareBinaries(device, true)) {
                     logger.info(binary.toString());
                     binaryCache.cache(binary);
                 }

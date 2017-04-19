@@ -14,7 +14,7 @@ public class ListingTask extends Task {
         DistributionService service = new DistributionService(options.getDistributionServerUrl());
         for (DeviceFirmware device : service.getDeviceFirmwares()) {
             logger.info(device.toString());
-            for (DeviceFirmwareBinary binary : service.getFirmwareBinaries(device)) {
+            for (DeviceFirmwareBinary binary : service.getFirmwareBinaries(device, !options.shouldListOldVersions())) {
                 logger.info(binary.toString());
             }
         }
